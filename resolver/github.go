@@ -30,7 +30,13 @@ func (r *github) Get(s string) (io.ReadCloser, error) {
 		return nil, ErrNotSupported
 	}
 
-	parts := strings.SplitN(u.Path, "/", 4)
+	version := "master"
+	parts := strings.SplitN(u.Path, "@", 2)
+	if len(parts) == 2 {
+		version = parts[1]
+	}
+
+	parts = strings.SplitN(parts[0], "/", 4)
 	if len(parts) < 3 {
 		return nil, errors.New("user, repo required in include url")
 	}
@@ -42,7 +48,7 @@ func (r *github) Get(s string) (io.ReadCloser, error) {
 	user := parts[1]
 	repo := parts[2]
 	file := parts[3]
-	raw := fmt.Sprintf("https://raw.githubusercontent.com/%s/%s/master/%s", user, repo, file)
+	raw := fmt.Sprintf("https://raw.githubusercontent.com/%s/%s/%s/%s", user, repo, version, file)
 
 	return r.resolver.Get(raw)
 }

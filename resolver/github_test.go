@@ -57,9 +57,13 @@ func TestGithubResolver(t *testing.T) {
 	res := resolver.NewGithubResolver(fakeResolver{
 		contents: map[string]string {
 			"https://raw.githubusercontent.com/user/repo/master/index.mk": "index.mk content",
+			"https://raw.githubusercontent.com/user/repo/v1.0/index.mk": "v1.0 index.mk content",
 			"https://raw.githubusercontent.com/user/repo/master/bar": "bar content",
+			"https://raw.githubusercontent.com/user/repo/v1.0/bar": "v1.0 bar content",
 			"https://raw.githubusercontent.com/user/repo/master/foo.mk": "foo.mk content",
+			"https://raw.githubusercontent.com/user/repo/branch-name/foo.mk": "branch-name foo.mk content",
 			"https://raw.githubusercontent.com/user/repo/master/baz/stuff.mk": "baz/stuff.mk content",
+			"https://raw.githubusercontent.com/user/repo/88fc849/baz/stuff.mk": "88fc849 baz/stuff.mk content",
 		},
 	})
 
@@ -71,6 +75,10 @@ func TestGithubResolver(t *testing.T) {
 		{"github.com/user/repo/bar", "bar content"},
 		{"github.com/user/repo/foo.mk", "foo.mk content"},
 		{"github.com/user/repo/baz/stuff.mk", "baz/stuff.mk content"},
+		{"github.com/user/repo@v1.0", "v1.0 index.mk content"},
+		{"github.com/user/repo/bar@v1.0", "v1.0 bar content"},
+		{"github.com/user/repo/foo.mk@branch-name", "branch-name foo.mk content"},
+		{"github.com/user/repo/baz/stuff.mk@88fc849", "88fc849 baz/stuff.mk content"},
 	}
 
 	for _, c := range cases {
