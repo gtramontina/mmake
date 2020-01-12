@@ -37,7 +37,7 @@ func ExampleInstaller_Parse() {
 	remove()
 
 	config := installer.Config{
-		Resolver:    resolver.NewGithubResolver(),
+		Resolver:    resolver.NewGithubResolver(resolver.NewHTTPResolver()),
 		Destination: "/tmp/include",
 		Log:         log.Log,
 	}
@@ -79,7 +79,7 @@ func ExampleInstaller_Install() {
 	remove()
 
 	config := installer.Config{
-		Resolver:    resolver.NewGithubResolver(),
+		Resolver:    resolver.NewGithubResolver(resolver.NewHTTPResolver()),
 		Destination: "/tmp/include",
 		Log:         log.Log,
 	}
@@ -116,7 +116,7 @@ func ExampleInstaller_Install_many() {
 	remove()
 
 	config := installer.Config{
-		Resolver:    resolver.NewGithubResolver(),
+		Resolver:    resolver.NewGithubResolver(resolver.NewHTTPResolver()),
 		Destination: "/tmp/include",
 		Log:         log.Log,
 	}
@@ -171,7 +171,7 @@ func TestInstaller_Update(t *testing.T) {
 	m := mockResolver{
 		getFn: func(path string) (io.ReadCloser, error) {
 			resolved = true
-			return resolver.NewGithubResolver().Get(path)
+			return resolver.NewGithubResolver(resolver.NewHTTPResolver()).Get(path)
 		},
 	}
 

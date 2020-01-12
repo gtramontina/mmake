@@ -3,7 +3,6 @@ package resolver
 import (
 	"fmt"
 	"io"
-	"net/http"
 	"net/url"
 	"strings"
 
@@ -11,11 +10,13 @@ import (
 )
 
 // github implementation.
-type github struct{}
+type github struct{
+	resolver Interface
+}
 
 // NewGithubResolver returns a github resolver.
-func NewGithubResolver() Interface {
-	return &github{}
+func NewGithubResolver(resolver Interface) Interface {
+	return &github{resolver:resolver}
 }
 
 // Get implementation.
@@ -43,25 +44,5 @@ func (r *github) Get(s string) (io.ReadCloser, error) {
 	file := parts[3]
 	raw := fmt.Sprintf("https://raw.githubusercontent.com/%s/%s/master/%s", user, repo, file)
 
-	return r.fetch(raw)
-}
-
-// Fetch over HTTP.
-func (r *github) fetch(url string) (io.ReadCloser, error) {
-	res, err := http.Get(url)
-	if err != nil {
-		return nil, errors.Wrapf(err, "requesting")
-	}
-
-	if res.StatusCode == 200 {
-		return res.Body, nil
-	}
-
-	defer res.Body.Close()
-
-	if res.StatusCode == 404 {
-		return nil, ErrNotFound
-	}
-
-	return nil, errors.Errorf("response %s", res.Status)
+	return r.resolver.Get(raw)
 }

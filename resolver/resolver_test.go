@@ -35,7 +35,7 @@ func TestGetIncludePath(t *testing.T) {
 }
 
 func TestGithub(t *testing.T) {
-	resolver := resolver.NewGithubResolver()
+	resolver := resolver.NewGithubResolver(resolver.NewHTTPResolver())
 
 	var cases = []struct {
 		Path    string
